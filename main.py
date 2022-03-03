@@ -41,24 +41,37 @@ def Initialize(Vertex_raw, Vertex_processed):
 Initialize(Vertex_raw, Vertex_processed)
 #print(Vertex_processed, "|",Edges_processed) проверка на правильность обработки
 #main loop for alg S
-for i in range(len(Vertex_processed)):
-	(Vertex_processed[i]).old_parent=(Vertex_processed[i]).parent
-""" как они могут писать так непонятно
-"""
-for j in range(len(Edges_raw)):
-	if(Vertex_processed[Edges_raw[j][0]]).old_parent>(Vertex_processed[(Edges_raw[j][1])]).old_parent:
-		(Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent = min((Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent, (Vertex_processed[Edges_raw[j][1]]).old_parent)
-	else:
-		(Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent = min((Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent,(Vertex_processed[Edges_raw[j][0]]).old_parent)
-while (True):
-	vp_check=0
-	for i in  range(len(Vertex_processed)):
-		(Vertex_processed[i]).old_parent=(Vertex_processed[i]).parent
-	for k in range(len(Vertex_processed)):
-		x= (Vertex_processed[k]).old_parent
-		if type(x)== 'int' and (Vertex_processed[k]).parent!=(Vertex_processed[x]).old_parent:
-			(Vertex_processed[k]).parent=(Vertex_processed[x]).old_parent
-			vp_check+=1
-	if(vp_check==0):
-		break
+#change и vp_check перменные для проверки сизменения v.p другого решения этой проблемы я не вижу так что будет так
+def parent_connect(Vertex_processed, Edges_raw):
+	change =0
+	while (True):
+		for i in range(len(Vertex_processed)):
+			(Vertex_processed[i]).old_parent=(Vertex_processed[i]).parent
+		for j in range(len(Edges_raw)):
+			if(Vertex_processed[Edges_raw[j][0]]).old_parent>(Vertex_processed[(Edges_raw[j][1])]).old_parent:
+				if((Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent !=min((Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent, (Vertex_processed[Edges_raw[j][1]]).old_parent)):
+					(Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent = min((Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent, (Vertex_processed[Edges_raw[j][1]]).old_parent)
+					change+=1
+			else:
+				if((Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent != min((Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent,(Vertex_processed[Edges_raw[j][0]]).old_parent)):
+					(Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent = min((Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent,(Vertex_processed[Edges_raw[j][0]]).old_parent)
+					change+=1
+		if(change==0):
+			break
+		else:
+			change=0
+def shortcut(Vertex_processed, Edges_raw):
+	while (True):
+		vp_check=0
+		for i in  range(len(Vertex_processed)):
+			(Vertex_processed[i]).old_parent=(Vertex_processed[i]).parent
+		for k in range(len(Vertex_processed)):
+			x= (Vertex_processed[k]).old_parent
+			if type(x)== 'int' and (Vertex_processed[k]).parent!=(Vertex_processed[x]).old_parent:
+				(Vertex_processed[k]).parent=(Vertex_processed[x]).old_parent
+				vp_check+=1
+		if(vp_check==0):
+			break
+
 print(Vertex_processed)
+#def algorithm_S(Vertex_raw, Edges_raw):
