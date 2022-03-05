@@ -28,7 +28,7 @@ Vertex_raw=[0,1,2,3,4,5,6]
 
 Vertex_processed=[]
 
-Edges_raw=[[1,2],[1,3],[0,4],[5,6],[3,4]]
+Edges_raw=[[1,2],[1,3],[2,3],[0,4],[5,6],[3,4]]
 
 Edges_processed=Edges_raw
 #инициализация которая обрабатывает введеные данные(raw->processed)
@@ -60,6 +60,7 @@ def parent_connect(Vertex_processed, Edges_raw):
 			break
 		else:
 			change=0
+		shortcut(Vertex_processed, Edges_raw)
 def shortcut(Vertex_processed, Edges_raw):
 	while (True):
 		vp_check=0
@@ -73,5 +74,12 @@ def shortcut(Vertex_processed, Edges_raw):
 		if(vp_check==0):
 			break
 
-print(Vertex_processed)
-#def algorithm_S(Vertex_raw, Edges_raw):
+#print(Vertex_processed)
+
+def Algorithm_S(Vertex_raw, Edges_raw):
+	Vertex_processed=[]
+	Initialize(Vertex_raw, Vertex_processed)
+	parent_connect(Vertex_processed, Edges_raw)
+	print(Vertex_processed)
+
+Algorithm_S(Vertex_raw,Edges_raw)
