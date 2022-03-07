@@ -57,10 +57,23 @@ def alter(Vertex_processed, Edges_raw):
 			Edges_raw[i][1]=(Vertex_processed[Edges_raw[i][1]]).parent
 		i+=1
 """
+[1,2],[1,3],[2,3],[0,4],[5,6],[3,4]
+direct-connect:
 for each edge {v, w} do
 if v > w then
 v.p = min{v.p, w}
 else w.p = min{w.p, v}
+
+for each vertex v do
+v.o = v.p
+for each vertex v do
+v.p = v.o.o
+
+alter:
+for each edge {v, w} do
+if v.p = w.p then
+delete {v, w}
+else replace {v, w} by {v.p, w.p}
 """
 def direct_connect(Vertex_processed, Edges_raw):
 	vp_check=0
@@ -132,15 +145,21 @@ def Algorithm_S(Vertex_raw, Edges_raw):
 	parent_connect(Vertex_processed, Edges_raw)
 	print(Vertex_processed)
 
-Algorithm_S(Vertex_raw,Edges_raw)
+#Algorithm_S(Vertex_raw,Edges_raw)
 Vertex_raw=[0,1,2,3,4,5,6]
 
 Vertex_processed=[]
-
+#Рабочий алгоритм в тестбеде
 Edges_raw=[[1,2],[1,3],[2,3],[0,4],[5,6],[3,4]]
 def Algorithm_A(Vertex_raw, Edges_raw):
 	Vertex_processed=[]
 	Initialize(Vertex_raw, Vertex_processed)
 	direct_connect(Vertex_processed, Edges_raw)
+	shortcut_no_while(Vertex_processed, Edges_raw)
+	alter(Vertex_processed, Edges_raw)
+	direct_connect(Vertex_processed, Edges_raw)
+	shortcut_no_while(Vertex_processed, Edges_raw)
+	alter(Vertex_processed, Edges_raw)
 	print(Vertex_processed)
+	print(Edges_raw)
 Algorithm_A(Vertex_raw, Edges_raw)
