@@ -76,9 +76,15 @@ def shortcut(Vertex_processed, Edges_raw):
 #print(Vertex_processed)
 
 def Algorithm_S(Vertex_raw, Edges_raw):
-	Vertex_processed=[]
-	Initialize(Vertex_raw, Vertex_processed)
-	parent_connect(Vertex_processed, Edges_raw)
-	print(Vertex_processed)
+	while(len(Edges_raw)!=0):
+		vp_old = vp_collector(Vertex_processed)
+		direct_connect(Vertex_processed, Edges_raw)
+		shortcut_no_while(Vertex_processed, Edges_raw)
+		alter(Vertex_processed, Edges_raw)
+		vp_new=vp_collector(Vertex_processed)
+		if (vp_old==vp_new):
+			t+=1
+		if t==2:
+			break
 
 Algorithm_S(Vertex_raw,Edges_raw)

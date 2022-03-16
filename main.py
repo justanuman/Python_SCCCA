@@ -28,7 +28,7 @@ Edges_processed=Edges_raw
 def Initialize(Vertex_raw, Vertex_processed):
 	for i in range(len(Vertex_raw)):
 		Vertex_processed.append(Vertex(i, i, i))
-Initialize(Vertex_raw, Vertex_processed)
+#Initialize(Vertex_raw, Vertex_processed)
 #print(Vertex_processed, "|",Edges_processed) проверка на правильность обработки
 #main loop for alg S
 #change и vp_check перменные для проверки сизменения v.p другого решения этой проблемы я не вижу так что будет так
@@ -104,25 +104,35 @@ def direct_connect(Vertex_processed, Edges_raw):
 			vp_check=0
 
 
-def parent_connect(Vertex_processed, Edges_raw):
+"""def parent_connect(Vertex_processed, Edges_raw):
 	change =0
-	while (True):
-		for i in range(len(Vertex_processed)):
-			(Vertex_processed[i]).old_parent=(Vertex_processed[i]).parent
-		for j in range(len(Edges_raw)):
-			if(Vertex_processed[Edges_raw[j][0]]).old_parent>(Vertex_processed[(Edges_raw[j][1])]).old_parent:
-				if((Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent !=min((Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent, (Vertex_processed[Edges_raw[j][1]]).old_parent)):
-					(Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent = min((Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent, (Vertex_processed[Edges_raw[j][1]]).old_parent)
-					change+=1
-			else:
-				if((Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent != min((Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent,(Vertex_processed[Edges_raw[j][0]]).old_parent)):
-					(Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent = min((Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent,(Vertex_processed[Edges_raw[j][0]]).old_parent)
-					change+=1
-		if(change==0):
-			break
+	#while (True):
+	for i in range(len(Vertex_processed)):
+		(Vertex_processed[i]).old_parent=(Vertex_processed[i]).parent
+	for j in range(len(Edges_raw)):
+		if(Vertex_processed[Edges_raw[j][0]]).old_parent>(Vertex_processed[(Edges_raw[j][1])]).old_parent:
+			if((Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent !=min((Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent, (Vertex_processed[Edges_raw[j][1]]).old_parent)):
+				(Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent = min((Vertex_processed[(Vertex_processed[Edges_raw[j][0]]).old_parent]).parent, (Vertex_processed[Edges_raw[j][1]]).old_parent)
+				change+=1
 		else:
-			change=0
-		shortcut(Vertex_processed, Edges_raw)
+			if((Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent != min((Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent,(Vertex_processed[Edges_raw[j][0]]).old_parent)):
+				(Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent = min((Vertex_processed[(Vertex_processed[Edges_raw[j][1]]).old_parent]).parent,(Vertex_processed[Edges_raw[j][0]]).old_parent)
+				change+=1
+		"""
+def parent_connect(Vertex_processed, Edges_raw):
+	for i in range(len(Vertex_processed)):
+		(Vertex_processed[i]).old_parent=(Vertex_processed[i]).parent
+	for j in range(len(Edges_raw)):
+		#print(Vertex_processed[Edges_raw[j][0]])
+		if (((Vertex_processed[Edges_raw[j][0]]).old_parent)>((Vertex_processed[Edges_raw[j][1]]).old_parent)):
+			(Vertex_processed[((Vertex_processed[Edges_raw[j][0]]).old_parent)]).parent= min((Vertex_processed[((Vertex_processed[Edges_raw[j][0]]).old_parent)]).parent, ((Vertex_processed[Edges_raw[j][1]]).old_parent))
+		else:
+			(Vertex_processed[((Vertex_processed[Edges_raw[j][1]]).old_parent)]).parent= min((Vertex_processed[((Vertex_processed[Edges_raw[j][1]]).old_parent)]).parent, ((Vertex_processed[Edges_raw[j][0]]).old_parent))
+def vp_collector(Vertex_processed):
+	vp_collection=[]
+	for i in range(len(Vertex_processed)):
+		vp_collection.append((Vertex_processed[i]).parent)
+	return vp_collection
 
 def shortcut(Vertex_processed, Edges_raw):
 	while (True):
@@ -136,22 +146,39 @@ def shortcut(Vertex_processed, Edges_raw):
 				vp_check+=1
 		if(vp_check==0):
 			break
+	for i in  range(len(Vertex_processed)):
+		(Vertex_processed[i]).old_parent=(Vertex_processed[i]).parent
+	for k in range(len(Vertex_processed)):
+		x= (Vertex_processed[k]).old_parent
+		if type(x)== 'int' and (Vertex_processed[k]).parent!=(Vertex_processed[x]).old_parent:
+			(Vertex_processed[k]).parent=(Vertex_processed[x]).old_parent
 
 #print(Vertex_processed)
 
 def Algorithm_S(Vertex_raw, Edges_raw):
 	Vertex_processed=[]
+	t=0
 	Initialize(Vertex_raw, Vertex_processed)
-	parent_connect(Vertex_processed, Edges_raw)
+	while(len(Edges_raw)!=0):
+		vp_old = vp_collector(Vertex_processed)
+		parent_connect(Vertex_processed, Edges_raw)
+		shortcut(Vertex_processed, Edges_raw)
+		vp_new=vp_collector(Vertex_processed)
+		if (vp_old==vp_new):
+			t+=1
+		if t==2:
+			break
+	#тут должно быть красивое оформление но do while в питоне нет
 	print(Vertex_processed)
+	print(Edges_raw)
 
-#Algorithm_S(Vertex_raw,Edges_raw)
+Algorithm_S(Vertex_raw,Edges_raw)
 Vertex_raw=[0,1,2,3,4,5,6]
 
 Vertex_processed=[]
 #Рабочий алгоритм в тестбеде
 Edges_raw=[[1,2],[1,3],[2,3],[0,4],[5,6],[3,4]]
-def Algorithm_A(Vertex_raw, Edges_raw):
+"""def Algorithm_A(Vertex_raw, Edges_raw):
 	Vertex_processed=[]
 	Initialize(Vertex_raw, Vertex_processed)
 	direct_connect(Vertex_processed, Edges_raw)
@@ -162,4 +189,4 @@ def Algorithm_A(Vertex_raw, Edges_raw):
 	alter(Vertex_processed, Edges_raw)
 	print(Vertex_processed)
 	print(Edges_raw)
-Algorithm_A(Vertex_raw, Edges_raw)
+Algorithm_A(Vertex_raw, Edges_raw)"""
