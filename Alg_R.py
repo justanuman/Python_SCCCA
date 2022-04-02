@@ -57,7 +57,6 @@ def AlgorithmR(Vertex_raw, Edges_raw):
 	return Vertex_processed
 
 def Algorithm_wrap(Vertex_raw, Edges_raw):
-	i=0
 	list_of_components=[]
 	Vertex_processed=AlgorithmR(Vertex_raw, Edges_raw)
 	for i in Vertex_processed:

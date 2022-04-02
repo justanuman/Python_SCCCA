@@ -80,7 +80,6 @@ def Algorithm_A(Vertex_raw, Edges_raw):
 #Algorithm_A(Vertex_raw, Edges_raw)
 
 def Algorithm_wrap(Vertex_raw, Edges_raw):
-	i=0
 	list_of_components=[]
 	Vertex_processed=Algorithm_A(Vertex_raw, Edges_raw)
 	for i in Vertex_processed:
