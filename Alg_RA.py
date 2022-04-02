@@ -1,5 +1,7 @@
 #R {parent-root-connect; shortcut} until no v.p changes
 from dataclasses import dataclass, field
+import networkx as nx
+import numpy 
 @dataclass
 class Vertex():
     """для хранение вершин тк им нужна свзяь"""
@@ -63,5 +65,29 @@ def AlgorithmRA(Vertex_raw, Edges_raw):
 			t+=1
 		if t==2:
 			break
-	print(Vertex_processed)
-AlgorithmRA(Vertex_raw, Edges_raw)
+	return Vertex_processed
+#Algorithm_A(Vertex_raw, Edges_raw)
+
+def Algorithm_wrap(Vertex_raw, Edges_raw):
+	i=0
+	list_of_components=[]
+	Vertex_processed=AlgorithmRA(Vertex_raw, Edges_raw)
+	for i in Vertex_processed:
+		vert_parent= i.parent
+		vert=i.number
+		add=False
+		for j in range(len(list_of_components)):
+			if(vert_parent in  (list_of_components[j])):
+				(list_of_components[j]).add(vert)
+				add= True
+		if add==False:
+			a= set()
+			a.add(vert)
+			list_of_components.append(a)
+	return list_of_components
+list_1= Algorithm_wrap(Vertex_raw, Edges_raw)
+Algorithm_wrap(Vertex_raw, Edges_raw)
+G = nx.Graph()
+G.add_edges_from([(1, 2), (1, 3),(2,3),(0,4),(5,6),(3,4)])
+list_2=list(nx.connected_components(G))
+print(numpy.array_equiv(list_1, list_2))

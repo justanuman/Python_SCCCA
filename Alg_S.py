@@ -1,4 +1,7 @@
 from dataclasses import dataclass, field
+import networkx as nx
+import numpy 
+
 # для начала сделаю алгоритм  S чтоб хоть что то работало
 #Algorithm S: repeat {parent-connect; repeat shortcut until no v.p changes} until no v.p changes
 """
@@ -115,8 +118,29 @@ def Algorithm_S(Vertex_raw, Edges_raw):
 		if t==2:
 			break
 	#тут должно быть красивое оформление но do while в питоне нет
-	print(Vertex_processed)
-	print(Edges_raw)
+	return Vertex_processed
+#Algorithm_A(Vertex_raw, Edges_raw)
 
-Algorithm_S(Vertex_raw,Edges_raw)
-
+def Algorithm_wrap(Vertex_raw, Edges_raw):
+	i=0
+	list_of_components=[]
+	Vertex_processed=Algorithm_S(Vertex_raw, Edges_raw)
+	for i in Vertex_processed:
+		vert_parent= i.parent
+		vert=i.number
+		add=False
+		for j in range(len(list_of_components)):
+			if(vert_parent in  (list_of_components[j])):
+				(list_of_components[j]).add(vert)
+				add= True
+		if add==False:
+			a= set()
+			a.add(vert)
+			list_of_components.append(a)
+	return list_of_components
+list_1= Algorithm_wrap(Vertex_raw, Edges_raw)
+Algorithm_wrap(Vertex_raw, Edges_raw)
+G = nx.Graph()
+G.add_edges_from([(1, 2), (1, 3),(2,3),(0,4),(5,6),(3,4)])
+list_2=list(nx.connected_components(G))
+print(numpy.array_equiv(list_1, list_2))
