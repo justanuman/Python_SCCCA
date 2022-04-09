@@ -1,4 +1,14 @@
 from dataclasses import dataclass, field
+import networkx as nx
+import numpy
+
+# для начала сделаю алгоритм  S чтоб хоть что то работало
+# Algorithm S: repeat {parent-connect; repeat shortcut until no v.p changes} until no v.p changes
+"""
+• Algorithm A: repeat {direct-connect; shortcut; alter} until no v.p changes
+• Algorithm R: repeat {parent-root-connect; shortcut} until no v.p changes
+• Algorithm RA: repeat {direct-root-connect; shortcut; alter} until no v.p changes
+"""
 
 
 @dataclass
@@ -13,21 +23,14 @@ class Vertex:
         return old_parent
 
 
-Vertex_raw = [0, 1, 2, 3, 4, 5, 6]
-
-Vertex_processed = []
-
-Edges_raw = [[1, 2], [1, 3], [2, 3], [0, 4], [5, 6], [3, 4]]
-
-Edges_processed = Edges_raw
 # инициализация которая обрабатывает введеные данные(raw->processed)
 # вообще тут проблема которая не факт что сразу решу но надо как то обойтись без поинтеров
 # но не факт возможно отдельный список вершин не нужен
 # так я подумал и по сути номер вершины это считай ссылка на неё так что в принцие можно будет обойтись
 def vp_collector(Vertex_processed):
-    vp_collection = []
+    vp_collection = set()
     for i in range(len(Vertex_processed)):
-        vp_collection.append((Vertex_processed[i]).parent)
+        vp_collection.add((Vertex_processed[i]).parent)
     return vp_collection
 
 
@@ -36,17 +39,11 @@ def Initialize(Vertex_raw, Vertex_processed):
         Vertex_processed.append(Vertex(i, i, i))
 
 
-def shortcut_no_while(Vertex_processed, Edges_raw):
-    for i in range(len(Vertex_processed)):
-        (Vertex_processed[i]).old_parent = (Vertex_processed[i]).parent
-    for k in range(len(Vertex_processed)):
-        x = (Vertex_processed[k]).old_parent
-        if (Vertex_processed[k]).parent != (Vertex_processed[x]).old_parent:
-            (Vertex_processed[k]).parent = (Vertex_processed[x]).old_parent
-
-
-Initialize(Vertex_raw, Vertex_processed)
-
+def shortcut(Vertex_processed, Edges_raw):
+    for i in Vertex_processed:
+        i.old_parent=i.parent
+    for k in Vertex_processed:
+        k.parent=(Vertex_processed[k.old_parent]).old_parent
 
 def alter(Vertex_processed, Edges_raw):
     i = 0  # тут если фор использовать будет выход за пределы так что так
@@ -78,19 +75,15 @@ def direct_connect(Vertex_processed, Edges_raw):
 
 def Algorithm_A(Vertex_raw, Edges_raw):
     Vertex_processed = []
-    t = 0
     Initialize(Vertex_raw, Vertex_processed)
     while len(Edges_raw) != 0:
         vp_old = vp_collector(Vertex_processed)
         direct_connect(Vertex_processed, Edges_raw)
-        shortcut_no_while(Vertex_processed, Edges_raw)
+        shortcut(Vertex_processed, Edges_raw)
         alter(Vertex_processed, Edges_raw)
         vp_new = vp_collector(Vertex_processed)
         if vp_old == vp_new:
-            t += 1
-        if t == 2:
             break
-    # тут должно быть красивое оформление но do while в питоне нет
     return Vertex_processed
 
 
@@ -101,16 +94,19 @@ def Algorithm_wrap(Vertex_raw, Edges_raw):
     list_of_components = []
     Vertex_processed = Algorithm_A(Vertex_raw, Edges_raw)
     for i in Vertex_processed:
-        vert_parent = i.parent
-        vert = i.number
+        number= i.number
+        parent= i.parent
         add = False
-        for j in range(len(list_of_components)):
-            if vert_parent in (list_of_components[j]):
-                (list_of_components[j]).add(vert)
-                add = True
-        if add == False:
-            a = set()
-            a.add(vert)
+        for i in list_of_components:
+            if parent in i:
+                add=True
+                i.add(number)
+            if number in i:
+                i.add(parent)
+                add=True
+        if(add==False):
+            a= set()
+            a.add(number)
+            a.add(parent)
             list_of_components.append(a)
     return list_of_components
-
