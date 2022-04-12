@@ -1,7 +1,7 @@
 # Algorithm R: repeat {parent-root-connect; shortcut} until no v.p changes
 from dataclasses import dataclass, field
 
-
+import collections
 @dataclass
 class Vertex:
 
@@ -12,12 +12,19 @@ class Vertex:
     def ret():
         return old_parent
 
+def check_if_equal(list_1, list_2):
+    """ Check if both the lists are of same length and then get the frequency
+    of each element in list using collections.Counter. Then Compare if both the Counter
+    objects are equal or not to confirm if lists contain similar elements with same frequency"""
+    if len(list_1) != len(list_2):
+        return False
+    return collections.Counter(list_1) == collections.Counter(list_2)
 
 def vp_collector(Vertex_processed):
-    vp_collection = set()
+    vp_collection = list()
     for i in range(len(Vertex_processed)):
-        vp_collection.add((Vertex_processed[i]).parent)
-    return 
+        vp_collection.append((Vertex_processed[i]).parent)
+    return vp_collection
 
 def vpo_collector(Vertex_processed):
     vp_collection = set()
@@ -78,7 +85,7 @@ def AlgorithmR(Vertex_raw, Edges_raw):
         shortcut(Vertex_processed, Edges_raw)
         vp_new = vp_collector(Vertex_processed)
         vpo_new = vpo_collector(Vertex_processed)
-        if(vp_old==vp_new and vpo_old==vpo_new):
+        if(check_if_equal(vp_new,vp_old)):
             break
     #print(Vertex_processed)
     return Vertex_processed

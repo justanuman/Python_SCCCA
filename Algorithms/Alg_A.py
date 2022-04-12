@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 import networkx as nx
 import numpy
-
+import collections
 # для начала сделаю алгоритм  S чтоб хоть что то работало
 # Algorithm S: repeat {parent-connect; repeat shortcut until no v.p changes} until no v.p changes
 """
@@ -22,15 +22,21 @@ class Vertex:
     def ret():
         return old_parent
 
-
+def check_if_equal(list_1, list_2):
+    """ Check if both the lists are of same length and then get the frequency
+    of each element in list using collections.Counter. Then Compare if both the Counter
+    objects are equal or not to confirm if lists contain similar elements with same frequency"""
+    if len(list_1) != len(list_2):
+        return False
+    return collections.Counter(list_1) == collections.Counter(list_2)
 # инициализация которая обрабатывает введеные данные(raw->processed)
 # вообще тут проблема которая не факт что сразу решу но надо как то обойтись без поинтеров
 # но не факт возможно отдельный список вершин не нужен
 # так я подумал и по сути номер вершины это считай ссылка на неё так что в принцие можно будет обойтись
 def vp_collector(Vertex_processed):
-    vp_collection = set()
+    vp_collection = list()
     for i in range(len(Vertex_processed)):
-        vp_collection.add((Vertex_processed[i]).parent)
+        vp_collection.append((Vertex_processed[i]).parent)
     return vp_collection
 
 
@@ -82,7 +88,7 @@ def Algorithm_A(Vertex_raw, Edges_raw):
         shortcut(Vertex_processed, Edges_raw)
         alter(Vertex_processed, Edges_raw)
         vp_new = vp_collector(Vertex_processed)
-        if vp_old == vp_new:
+        if check_if_equal(vp_new,vp_old):
             break
     return Vertex_processed
 
