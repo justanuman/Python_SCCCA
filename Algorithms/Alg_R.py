@@ -17,13 +17,15 @@ def vp_collector(Vertex_processed):
     vp_collection = set()
     for i in range(len(Vertex_processed)):
         vp_collection.add((Vertex_processed[i]).parent)
-    return 
+    return
+
 
 def vpo_collector(Vertex_processed):
     vp_collection = set()
     for i in range(len(Vertex_processed)):
         vp_collection.add((Vertex_processed[i]).old_parent)
     return vp_collection
+
 
 def Initialize(Vertex_raw, Vertex_processed):
     for i in range(len(Vertex_raw)):
@@ -62,9 +64,9 @@ def parent_root_connect(Vertex_processed, Edges_raw):
 
 def shortcut(Vertex_processed, Edges_raw):
     for i in Vertex_processed:
-        i.old_parent=i.parent
+        i.old_parent = i.parent
     for k in Vertex_processed:
-        k.parent=(Vertex_processed[k.old_parent]).old_parent
+        k.parent = (Vertex_processed[k.old_parent]).old_parent
 
 
 def AlgorithmR(Vertex_raw, Edges_raw):
@@ -78,9 +80,9 @@ def AlgorithmR(Vertex_raw, Edges_raw):
         shortcut(Vertex_processed, Edges_raw)
         vp_new = vp_collector(Vertex_processed)
         vpo_new = vpo_collector(Vertex_processed)
-        if(vp_old==vp_new and vpo_old==vpo_new):
+        if vp_old == vp_new and vpo_old == vpo_new:
             break
-    #print(Vertex_processed)
+    # print(Vertex_processed)
     return Vertex_processed
 
 
@@ -88,18 +90,18 @@ def Algorithm_wrap(Vertex_raw, Edges_raw):
     list_of_components = []
     Vertex_processed = AlgorithmR(Vertex_raw, Edges_raw)
     for i in Vertex_processed:
-        number= i.number
-        parent= i.parent
+        number = i.number
+        parent = i.parent
         add = False
         for j in list_of_components:
             if parent in j:
-                add=True
+                add = True
                 j.add(number)
             if number in j:
                 j.add(parent)
-                add=True
-        if(add==False):
-            a= set()
+                add = True
+        if add == False:
+            a = set()
             a.add(number)
             a.add(parent)
             list_of_components.append(a)

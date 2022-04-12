@@ -41,9 +41,10 @@ def Initialize(Vertex_raw, Vertex_processed):
 
 def shortcut(Vertex_processed, Edges_raw):
     for i in Vertex_processed:
-        i.old_parent=i.parent
+        i.old_parent = i.parent
     for k in Vertex_processed:
-        k.parent=(Vertex_processed[k.old_parent]).old_parent
+        k.parent = (Vertex_processed[k.old_parent]).old_parent
+
 
 def alter(Vertex_processed, Edges_raw):
     i = 0  # тут если фор использовать будет выход за пределы так что так
@@ -94,18 +95,18 @@ def Algorithm_wrap(Vertex_raw, Edges_raw):
     list_of_components = []
     Vertex_processed = Algorithm_A(Vertex_raw, Edges_raw)
     for i in Vertex_processed:
-        number= i.number
-        parent= i.parent
+        number = i.number
+        parent = i.parent
         add = False
         for i in list_of_components:
             if parent in i:
-                add=True
+                add = True
                 i.add(number)
             if number in i:
                 i.add(parent)
-                add=True
-        if(add==False):
-            a= set()
+                add = True
+        if add == False:
+            a = set()
             a.add(number)
             a.add(parent)
             list_of_components.append(a)
