@@ -10,17 +10,6 @@ class Vertex:
     parent: int = 0
     old_parent: int = 0
 
-    def ret():
-        return old_parent
-
-
-Vertex_raw = [0, 1, 2, 3, 4, 5, 6]
-
-Vertex_processed = []
-
-Edges_raw = [[1, 2], [1, 3], [2, 3], [0, 4], [5, 6], [3, 4]]
-
-Edges_processed = Edges_raw
 
 
 def vp_collector(Vertex_processed):

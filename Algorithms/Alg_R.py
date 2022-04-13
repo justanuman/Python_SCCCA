@@ -14,11 +14,33 @@ class Vertex:
 
 
 def vp_collector(Vertex_processed):
-    vp_collection = set()
+    vp_collection = list()
     for i in range(len(Vertex_processed)):
-        vp_collection.add((Vertex_processed[i]).parent)
-    return
+        vp_collection.append((Vertex_processed[i]).parent)
+    return vp_collection
 
+def inside_wrap(Vertex_processed):
+    list_of_components=[]
+    output_list=[]
+    for i in Vertex_processed:
+        number = i.number
+        parent = i.parent
+        add = False
+        for i in list_of_components:
+            if parent in i:
+                add = True
+                i.add(number)
+            if number in i:
+                i.add(parent)
+                add = True
+        if add == False:
+            a = set()
+            a.add(number)
+            a.add(parent)
+            list_of_components.append(a)
+    for i in list_of_components:
+        output_list.append(list(i))
+    return list(output_list)
 
 def vpo_collector(Vertex_processed):
     vp_collection = set()
@@ -83,7 +105,7 @@ def AlgorithmR(Vertex_raw, Edges_raw):
         if vp_old == vp_new and vpo_old == vpo_new:
             break
     # print(Vertex_processed)
-    return Vertex_processed
+    return inside_wrap(Vertex_processed)
 
 
 def Algorithm_wrap(Vertex_raw, Edges_raw):

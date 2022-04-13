@@ -57,12 +57,15 @@ for i in range(20):
 		raw_ra.append(a)
 		for_net.append(b)
 
-#print(for_net)
+#print(raw_a)
 print("____")
 G = nx.Graph()
 G.add_edges_from(for_net)
 print("networkx")
 etalon=list(nx.connected_components(G))
+#сравнение к  сожалению не идеальное я постараюсь придумать получше
+#так что периодически он ломается если внутри компонентов разный порядок
+#
 def compare(s, t):
     first_set = set(map(tuple, s))
     secnd_set = set(map(tuple, t))
@@ -76,20 +79,22 @@ def cleanup(dirtyInp):
 	return cleanout
 etalon=cleanup(etalon)
 print(etalon)
+
 print("alg_S")
-clean_S=cleanup(S.Algorithm_wrap([i for i in range(0,20)], raw_s))
+clean_S=cleanup(S.Algorithm_S([i for i in range(0,20)], raw_s))
 print(clean_S)
 print("Alg_R")
-clean_R=cleanup(R.Algorithm_wrap([i for i in range(0,20)], raw_r))
+clean_R=cleanup(R.AlgorithmR([i for i in range(0,20)], raw_r))
 print(clean_R)
 print("Alg_A")
-clean_A=cleanup(A.Algorithm_wrap([i for i in range(0,20)], raw_a))
+clean_A=cleanup(A.Algorithm_A([i for i in range(0,20)], raw_a))
 print(clean_A)
-clean_RA=cleanup(RA.Algorithm_wrap([i for i in range(0,20)], raw_ra))
+clean_RA=cleanup(RA.AlgorithmRA([i for i in range(0,20)], raw_ra))
 print("Alg_RA")
 print(clean_RA)
-
-assert compare(clean_A, etalon)
 assert compare(clean_R, etalon)
+assert compare(clean_A, etalon)
 assert compare(clean_S, etalon)
+
 assert compare(clean_RA, etalon)
+
