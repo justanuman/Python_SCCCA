@@ -19,9 +19,10 @@ def vp_collector(Vertex_processed):
         vp_collection.append((Vertex_processed[i]).parent)
     return vp_collection
 
+
 def inside_wrap(Vertex_processed):
-    list_of_components=[]
-    output_list=[]
+    list_of_components = []
+    output_list = []
     for i in Vertex_processed:
         number = i.number
         parent = i.parent
@@ -41,6 +42,7 @@ def inside_wrap(Vertex_processed):
     for i in list_of_components:
         output_list.append(list(i))
     return list(output_list)
+
 
 def vpo_collector(Vertex_processed):
     vp_collection = set()

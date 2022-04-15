@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 import collections
 
+
 @dataclass
 class Vertex:
     number: int = 0
@@ -14,12 +15,15 @@ def Initialize(Vertex_raw):
         Vertex_processed.append(Vertex(i, i))
     return Vertex_processed
 
+
 """for each vertex v do
 v.o = v.p
 for each edge {v, w} do
 if v.o > w.o then
 v.o.p = min{v.o.p, w.o}
 else w.o.p = min{w.o.p, v.o}"""
+
+
 def parent_connect(Vertex_processed, Edges_raw):
     for i in Vertex_processed:
         i.old_parent = i.parent
@@ -39,22 +43,22 @@ def vp_collector(Vertex_processed):
     return vp_collection
 
 
-
-
 def shortcut(Vertex_processed, Edges_raw):
     for i in Vertex_processed:
         i.old_parent = i.parent
     for k in Vertex_processed:
         k.parent = (Vertex_processed[k.old_parent]).old_parent
 
+
 def check_if_equal(list_1, list_2):
     if len(list_1) != len(list_2):
         return False
     return collections.Counter(list_1) == collections.Counter(list_2)
 
+
 def inside_wrap(Vertex_processed):
-    list_of_components=[]
-    output_list=[]
+    list_of_components = []
+    output_list = []
     for i in Vertex_processed:
         number = i.number
         parent = i.parent
@@ -74,6 +78,8 @@ def inside_wrap(Vertex_processed):
     for i in list_of_components:
         output_list.append(list(i))
     return list(output_list)
+
+
 # Algorithm S: repeat {parent-connect; repeat shortcut until no v.p changes} until no v.p changes
 def Algorithm_S(Vertex_raw, Edges_raw):
     Vertex_processed = Initialize(Vertex_raw)

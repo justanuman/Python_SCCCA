@@ -7,8 +7,10 @@ class Vertex:
     number: int = 0
     parent: int = 0
     old_parent: int = 0
+
     def ret():
         return old_parent
+
 
 def vp_collector(Vertex_processed):
     vp_collection = []
@@ -77,7 +79,7 @@ def AlgorithmR(Vertex_raw, Edges_raw):
             t += 1
         if t == 2:
             break
-    #print(Vertex_processed)
+    # print(Vertex_processed)
     return Vertex_processed
 
 

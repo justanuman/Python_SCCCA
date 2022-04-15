@@ -113,4 +113,3 @@ def Algorithm_wrap(Vertex_raw, Edges_raw):
             a.add(vert)
             list_of_components.append(a)
     return list_of_components
-

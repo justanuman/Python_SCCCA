@@ -1,60 +1,90 @@
-# R {parent-root-connect; shortcut} until no v.p changes
+# • Algorithm RA: repeat {direct-root-connect; shortcut; alter} until no v.p changes
 from dataclasses import dataclass, field
+import collections
 
 
 @dataclass
 class Vertex:
-    """для хранение вершин тк им нужна свзяь"""
-
     number: int = 0
     parent: int = 0
     old_parent: int = 0
 
 
+def check_if_equal(list_1, list_2):
+    if len(list_1) != len(list_2):
+        return False
+    return collections.Counter(list_1) == collections.Counter(list_2)
+
 
 def vp_collector(Vertex_processed):
-    vp_collection = []
+    vp_collection = list()
     for i in range(len(Vertex_processed)):
         vp_collection.append((Vertex_processed[i]).parent)
     return vp_collection
 
 
-def Initialize(Vertex_raw, Vertex_processed):
+"""
+initialize:
+    for each vertex v do v.p = v
+"""
+
+
+def Initialize(Vertex_raw):
+    Vertex_processed = []
     for i in range(len(Vertex_raw)):
-        Vertex_processed.append(Vertex(i, i, i))
+        Vertex_processed.append(Vertex(i, i))
+    return Vertex_processed
+
+
+"""
+direct-root-connect:
+    for each vertex v do
+        v.o = v.p
+    for each edge {v, w} do
+        if v > w and v = v.o then
+            v.p = min{v.p, w}
+        else if w = w.o then
+            w.p = min{w.p, v}
+"""
 
 
 def direct_root_connect(Vertex_processed, Edges_raw):
-    for i in range(len(Vertex_processed)):
-        (Vertex_processed[i]).old_parent = (Vertex_processed[i]).parent
-        for j in range(len(Edges_raw)):
-            if (
-                Edges_raw[j][0] > Edges_raw[j][1]
-                and Edges_raw[j][0] == (Vertex_processed[Edges_raw[j][0]]).old_parent
-            ):
-                (Vertex_processed[Edges_raw[j][0]]).parent = min(
-                    (Vertex_processed[Edges_raw[j][0]]).parent, Edges_raw[j][1]
-                )
-            elif Edges_raw[j][1] == (Vertex_processed[Edges_raw[j][1]]).old_parent:
-                (Vertex_processed[Edges_raw[j][1]]).parent = min(
-                    (Vertex_processed[Edges_raw[j][1]]).parent, Edges_raw[j][0]
-                )
+    for i in Vertex_processed:
+        i.old_parent = i.parent
+    for j in Edges_raw:
+        v = (Vertex_processed[j[0]]).number
+        w = (Vertex_processed[j[1]]).number
+        if ((v > w)) and (v == (Vertex_processed[j[0]]).old_parent):
+            (Vertex_processed[j[0]]).parent = min((Vertex_processed[j[0]]).parent, w)
+        elif w == (Vertex_processed[j[1]]).old_parent:
+            (Vertex_processed[j[1]]).parent = min((Vertex_processed[j[1]]).parent, v)
+
+
+"""
+for each vertex v do
+    v.o = v.p
+for each vertex v do
+    v.p = v.o.o
+"""
 
 
 def shortcut(Vertex_processed, Edges_raw):
-    for i in range(len(Vertex_processed)):
-        (Vertex_processed[i]).old_parent = (Vertex_processed[i]).parent
-    for k in range(len(Vertex_processed)):
-        x = (Vertex_processed[k]).old_parent
-        if (
-            type(x) == "int"
-            and (Vertex_processed[k]).parent != (Vertex_processed[x]).old_parent
-        ):
-            (Vertex_processed[k]).parent = (Vertex_processed[x]).old_parent
+    for i in Vertex_processed:
+        i.old_parent = i.parent
+    for k in Vertex_processed:
+        k.parent = (Vertex_processed[k.old_parent]).old_parent
+
+
+"""
+for each edge {v, w} do
+    if v.p = w.p then
+        delete {v, w}
+    else replace {v, w} by {v.p, w.p}
+"""
 
 
 def alter(Vertex_processed, Edges_raw):
-    i = 0  # тут если фор использовать будет выход за пределы так что так
+    i = 0
     while i < len(Edges_raw):
         if (Vertex_processed[Edges_raw[i][0]]).parent == (
             Vertex_processed[Edges_raw[i][1]]
@@ -66,41 +96,112 @@ def alter(Vertex_processed, Edges_raw):
         i += 1
 
 
+def inside_wrap(Vertex_processed):
+    list_of_components = []
+    output_list = []
+    for i in Vertex_processed:
+        number = i.number
+        parent = i.parent
+        add = False
+        for i in list_of_components:
+            if parent in i:
+                add = True
+                i.add(number)
+            if number in i:
+                i.add(parent)
+                add = True
+        if add == False:
+            a = set()
+            a.add(number)
+            a.add(parent)
+            list_of_components.append(a)
+    for i in list_of_components:
+        output_list.append(list(i))
+    return list(output_list)
+
+
+# • Algorithm RA: repeat {direct-root-connect; shortcut; alter} until no v.p changes
+
+
 def AlgorithmRA(Vertex_raw, Edges_raw):
-    Vertex_processed = []
-    t = 0
-    Initialize(Vertex_raw, Vertex_processed)
-    while len(Edges_raw) != 0:
+    Vertex_processed = Initialize(Vertex_raw)
+    while True:
         vp_old = vp_collector(Vertex_processed)
         direct_root_connect(Vertex_processed, Edges_raw)
         shortcut(Vertex_processed, Edges_raw)
         alter(Vertex_processed, Edges_raw)
         vp_new = vp_collector(Vertex_processed)
-        if vp_old == vp_new:
-            t += 1
-        if t == 2:
+        # print(Vertex_processed)
+        if check_if_equal(vp_new, vp_old) and len(Edges_raw) == 0:
             break
-    return Vertex_processed
-
-
-# Algorithm_A(Vertex_raw, Edges_raw)
+    return inside_wrap(Vertex_processed)
 
 
 def Algorithm_wrap(Vertex_raw, Edges_raw):
     list_of_components = []
     Vertex_processed = AlgorithmRA(Vertex_raw, Edges_raw)
     for i in Vertex_processed:
-        vert_parent = i.parent
-        vert = i.number
+        number = i.number
+        parent = i.parent
         add = False
-        for j in range(len(list_of_components)):
-            if vert_parent in (list_of_components[j]):
-                (list_of_components[j]).add(vert)
+        for j in list_of_components:
+            if parent in j:
+                j.add(number)
+                add = True
+            if number in j:
+                j.add(parent)
                 add = True
         if add == False:
             a = set()
-            a.add(vert)
+            a.add(number)
+            a.add(parent)
             list_of_components.append(a)
     return list_of_components
 
 
+"""
+input
+
+
+input
+
+mistake alg RA
+[[0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]]
+[[0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18]]
+"""
+
+
+def cleanup(dirtyInp):
+    cleanout = list()
+    for i in dirtyInp:
+        if len(i) != 1:
+            temp = list(i)
+            cleanout.append(temp)
+    return cleanout
+
+
+raw_ra = [
+    [8, 16],
+    [16, 17],
+    [11, 13],
+    [0, 15],
+    [0, 17],
+    [8, 7],
+    [12, 5],
+    [18, 14],
+    [9, 5],
+    [18, 4],
+    [10, 19],
+    [1, 18],
+    [10, 12],
+    [2, 6],
+    [2, 7],
+    [4, 5],
+    [10, 6],
+    [2, 15],
+    [13, 7],
+    [1, 5],
+]
+clean_RA = cleanup(AlgorithmRA([i for i in range(0, 20)], raw_ra))
+print("[[0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]]")
+print(clean_RA)

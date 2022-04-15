@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 import networkx as nx
 import numpy
 import collections
+
 # для начала сделаю алгоритм  S чтоб хоть что то работало
 # Algorithm S: repeat {parent-connect; repeat shortcut until no v.p changes} until no v.p changes
 """
@@ -16,12 +17,13 @@ class Vertex:
     number: int = 0
     parent: int = 0
     old_parent: int = 0
-   
+
 
 def check_if_equal(list_1, list_2):
     if len(list_1) != len(list_2):
         return False
     return collections.Counter(list_1) == collections.Counter(list_2)
+
 
 # инициализация которая обрабатывает введеные данные(raw->processed)
 # вообще тут проблема которая не факт что сразу решу но надо как то обойтись без поинтеров
@@ -60,6 +62,7 @@ def alter(Vertex_processed, Edges_raw):
             Edges_raw[i][1] = (Vertex_processed[Edges_raw[i][1]]).parent
         i += 1
 
+
 def check_if_equal(list_1, list_2):
     if len(list_1) != len(list_2):
         return False
@@ -77,11 +80,13 @@ def direct_connect(Vertex_processed, Edges_raw):
         else:
             (Vertex_processed[Edges_raw[i][1]]).parent = min(
                 (Vertex_processed[Edges_raw[i][1]]).parent,
-                (Vertex_processed[Edges_raw[i][0]]).number)
+                (Vertex_processed[Edges_raw[i][0]]).number,
+            )
+
 
 def inside_wrap(Vertex_processed):
-    list_of_components=[]
-    output_list=[]
+    list_of_components = []
+    output_list = []
     for i in Vertex_processed:
         number = i.number
         parent = i.parent
@@ -102,8 +107,9 @@ def inside_wrap(Vertex_processed):
         output_list.append(list(i))
     return list(output_list)
 
+
 def Algorithm_A(Vertex_raw, Edges_raw):
-    t=0
+    t = 0
     Vertex_processed = []
     Initialize(Vertex_raw, Vertex_processed)
     while True:
@@ -114,15 +120,20 @@ def Algorithm_A(Vertex_raw, Edges_raw):
         alter(Vertex_processed, Edges_raw)
 
         vp_new = vp_collector(Vertex_processed)
-        
+
         # я не могу объяснить причем тут длина списка граней
-        #но просто условие на смену родителей не работает 
-        #алгоритм то правильный он просто пару циклов не добивает так что возможно те два ученых мужа ошиблись либо они не то имели в виду
-        #но теперь тесты проходятся чаще
-        if (check_if_equal(vp_new,vp_old)) and len(Edges_raw)==0:
+        # но просто условие на смену родителей не работает
+        # алгоритм то правильный он просто пару циклов не добивает так что возможно те два ученых мужа ошиблись либо они не то имели в виду
+        # но теперь тесты проходятся чаще
+        # осмелюсь предположить что это тоже связано с аномальным поведением RA
+        # но тут непонятно мне
+        # если можно было бы как нибудь разобраться то было бы прекрасно
+        # я сомневаюсь что кто нибудь читает эти комментарии
+        if (check_if_equal(vp_new, vp_old)) and len(Edges_raw) == 0:
             break
 
     return inside_wrap(Vertex_processed)
+
 
 # Algorithm_A(Vertex_raw, Edges_raw)
 
