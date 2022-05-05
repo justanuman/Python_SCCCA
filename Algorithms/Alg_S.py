@@ -21,9 +21,24 @@ v.o = v.p
 for each edge {v, w} do
 if v.o > w.o then
 v.o.p = min{v.o.p, w.o}
-else w.o.p = min{w.o.p, v.o}"""
+else w.o.p = min{w.o.p, v.o}
 
+for each edge {v, w} do
+if v.p > w.p then
+v.p.p = min{v.p.p, w.p}
+else w.p.p = min{w.p.p, v.p}
+"""
 
+def parent_connect_simple(Vertex_processed, Edges_raw):
+    for j in Edges_raw:
+        vp = (Vertex_processed[j[0]]).parent
+        wp = (Vertex_processed[j[1]]).parent
+        if(vp>wp):
+             (Vertex_processed[vp]).parent = min((Vertex_processed[vp]).parent, wp)
+        else:
+             (Vertex_processed[wp]).parent = min((Vertex_processed[wp]).parent, vp)
+
+             
 def parent_connect(Vertex_processed, Edges_raw):
     for i in Vertex_processed:
         i.old_parent = i.parent
@@ -85,7 +100,7 @@ def Algorithm_S(Vertex_raw, Edges_raw):
     Vertex_processed = Initialize(Vertex_raw)
     while True:
         vp_old = vp_collector(Vertex_processed)
-        parent_connect(Vertex_processed, Edges_raw)
+        parent_connect_simple(Vertex_processed, Edges_raw)
         while True:
             vp_old_ct = vp_collector(Vertex_processed)
             shortcut(Vertex_processed, Edges_raw)
