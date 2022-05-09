@@ -122,7 +122,16 @@ def findVertex_analog_v2(vert, Vertexes):
 def prot_init_v3(element, sharedlist):
     sharedlist.append(Vertex(element, element))
 
+def prot_init_v4(element, sharedlist,sharedlist2):
+    sharedlist[element]=(Vertex(element, element))
+    sharedlist2[element]=(Vertex(element, element))
 
+def check_if_equal(element, sharedlist,sharedlist2):
+    addr= element.number
+    if((sharedlist[addr]).parent!=(sharedlist2[addr]).parent):
+        return False
+    else:
+        return None
 def prot_naive_alg_v6(arc, sharedlist):
     v = findVertex_v2(arc[0], sharedlist)
     w = findVertex_v2(arc[1], sharedlist)
@@ -137,20 +146,28 @@ def prot_naive_alg_v6(arc, sharedlist):
     if write_confl_w.parent > w.parent:
         sharedlist[write_confl_w_addr] = w
 
-
+def check_if_equal(v,sh):
+    if(v.parent!=(sh[v.number]).parent):
+        return False
+    else:
+        return None
 if __name__ == "__main__":
     pool = multiprocessing.Pool()
     manager = multiprocessing.Manager()
-    sharedlist = manager.list()
-    sharedlist2 = manager.list()
-    tasks = [(x, sharedlist) for x in Vertex_raw]
+    sharedlist = manager.list(Vertex_raw)
+    sharedlist2 = manager.list(Vertex_raw)
+    #sharedlist=[0]*len(Vertex_raw)
+    tasks = [(x, sharedlist,sharedlist2) for x in Vertex_raw]
     task2 = [(x, sharedlist) for x in Edges_raw]
     taskvert=[(x,sharedlist) for x in sharedlist]
-    pool.starmap(prot_init_v3, tasks)
+    pool.starmap(prot_init_v4, tasks)
     pool.close()
     pool2 = multiprocessing.Pool()
     for i in range(5):
+        taskcheck=[(x,sharedlist2) for x in sharedlist]
         pool2.starmap(parent_connect_simple, task2)
+        print([None]*len(Vertex_raw)==pool2.starmap(check_if_equal,taskcheck))
+
         taskvert=[(x,sharedlist) for x in sharedlist]
         pool2.starmap(shortcut, taskvert)
         pool2.starmap(shortcut, taskvert)
