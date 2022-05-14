@@ -44,13 +44,10 @@ for each vertex v do
     v.o = v.p
 for each vertex v do
     v.p = v.o.o
-
-
 for each edge {v, w} do
 if v.p > w.p then
 v.p.p = min{v.p.p, w.p}
 else w.p.p = min{w.p.p, v.p}
-
 for j in Edges_raw:
         vp = (Vertex_processed[j[0]]).parent
         wp = (Vertex_processed[j[1]]).parent
@@ -58,12 +55,10 @@ for j in Edges_raw:
              (Vertex_processed[vp]).parent = min((Vertex_processed[vp]).parent, wp)
         else:
              (Vertex_processed[wp]).parent = min((Vertex_processed[wp]).parent, vp)
-
 write_confl_v = findVertex_v2(v.number, sharedlist)
     write_confl_w = findVertex_v2(w.number, sharedlist)
     write_confl_v_addr = findVertex_analog(v.number, sharedlist)
     write_confl_w_addr = findVertex_analog(w.number, sharedlist)
-
 """
 def vp_collector(v,sharedlist,sharedlist2):
     pass
@@ -177,4 +172,3 @@ if __name__ == "__main__":
         pool2.starmap(shortcut, taskvert)
     pool2.close()
     print(sharedlist)
-# наивный алгоритм (наверное)
