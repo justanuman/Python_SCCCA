@@ -103,6 +103,18 @@ def compareProccess(*a):
 		case 6:
 			return Vertex(min((arglist[0]).number,(arglist[1]).number,(arglist[2]).number,(arglist[3]).number,(arglist[4]).number,(arglist[5]).number),min((arglist[0]).parent,(arglist[1]).parent,(arglist[2]).parent,(arglist[3]).parent,(arglist[4]).parent,(arglist[5]).parent),min((arglist[0]).old_parent,(arglist[1]).old_parent,(arglist[3]).old_parent),(arglist[4]).old_parent,(arglist[5]).old_parent)		
 
+def zipper(a):
+	match len(a):
+		case 2:
+			return zip(a[0],a[1])
+		case 3:
+			return zip(a[0],a[1],a[2])
+		case 4:
+			return zip(a[0],a[1],a[2],a[3])
+		case 5:
+			return zip(a[0],a[1],a[2],a[3],a[4])
+		case 6:
+			return zip(a[0],a[1],a[2],a[3],a[4],a[5])
 def parentCollect(a):
 	return a.parent
 
@@ -119,7 +131,32 @@ if __name__ == "__main__":
 	pool = multiprocessing.Pool(processes=6)
 	Vertex_raw=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
 	Edges_raw=[[18, 16], [13, 16], [17, 5], [6, 13], [11, 10], [4, 6], [9, 10], [0, 6], [7, 12], [13, 11], [7, 10], [3, 11], [14, 0], [13, 7], [15, 1], [6, 9], [0, 18], [3, 2], [15, 11], [3, 2],]
+	Vertex_processed= pool.map(parInit,Vertex_raw)
+	splitEdges = list(chunks(Edges_raw,6))
+	grouplist= grouping(Vertex_processed, splitEdges)
+	list1 = (pool.starmap(processPart, grouplist))
+	list2=(pool.starmap(compareProccess, zipper(list1)))
+	list3=pool.map(parentCollect, list2)
+	list4=[]
+	while (list3!=list4):
+		list3=pool.map(parentCollect, list2)
+		grouplist= grouping(list2, splitEdges)
+		list1 = (pool.starmap(processPart, grouplist))
+		list2=(pool.starmap(compareProccess, zipper(list1)))
+		list4=pool.map(parentCollect, list2)
+	print(list4)
+	print(list2)
+	pool.close()
+"""
+if __name__ == "__main__":
+	pool = multiprocessing.Pool(processes=6)
+	Vertex_raw=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+	Edges_raw=[[18, 16], [13, 16], [17, 5], [6, 13], [11, 10], [4, 6], [9, 10], [0, 6], [7, 12], [13, 11], [7, 10], [3, 11], [14, 0], [13, 7], [15, 1], [6, 9], [0, 18], [3, 2], [15, 11], [3, 2],]
+	
+
+
 	vert= pool.map(parInit,Vertex_raw)
+	
 	splitEdge = list(chunks(Edges_raw,6))
 	print(len(splitEdge))
 	grouplist= grouping(vert, splitEdge)
@@ -138,3 +175,4 @@ if __name__ == "__main__":
 	print(list3)	
 	print(list2)
 	pool.close()
+"""
