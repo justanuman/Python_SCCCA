@@ -116,7 +116,7 @@ def compareProccess(*a):
                 min(
                     (arglist[0]).old_parent,
                     (arglist[1]).old_parent,
-                    (arglist[3]).old_parent,
+                    (arglist[2]).old_parent,
                 ),
             )
         case 4:
@@ -136,6 +136,7 @@ def compareProccess(*a):
                 min(
                     (arglist[0]).old_parent,
                     (arglist[1]).old_parent,
+                    (arglist[2]).old_parent,
                     (arglist[3]).old_parent,
                 ),
             )
@@ -159,8 +160,9 @@ def compareProccess(*a):
                     (arglist[0]).old_parent,
                     (arglist[1]).old_parent,
                     (arglist[3]).old_parent,
+                    (arglist[4]).old_parent
                 ),
-                (arglist[4]).old_parent,
+               
             )
         case 6:
             return Vertex(
@@ -184,9 +186,10 @@ def compareProccess(*a):
                     (arglist[0]).old_parent,
                     (arglist[1]).old_parent,
                     (arglist[3]).old_parent,
+                    (arglist[4]).old_parent,
+                	(arglist[5]).old_parent,
                 ),
-                (arglist[4]).old_parent,
-                (arglist[5]).old_parent,
+                
             )
 
 
@@ -258,37 +261,52 @@ if __name__ == "__main__":
         list3 = pool.map(parentCollect, list2)
         grouplist = grouping(list2, splitEdges)
         list1 = pool.starmap(processPart, grouplist)
-        list2 = pool.starmap(compareProccess, zipper(list1))
+        #list2 = pool.starmap(compareProccess, zipper(list1))
         list4 = pool.map(parentCollect, list2)
     print(list4)
     print(list2)
     pool.close()
 """
-if __name__ == "__main__":
-	pool = multiprocessing.Pool(processes=6)
-	Vertex_raw=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
-	Edges_raw=[[18, 16], [13, 16], [17, 5], [6, 13], [11, 10], [4, 6], [9, 10], [0, 6], [7, 12], [13, 11], [7, 10], [3, 11], [14, 0], [13, 7], [15, 1], [6, 9], [0, 18], [3, 2], [15, 11], [3, 2],]
-	
-
-
-	vert= pool.map(parInit,Vertex_raw)
-	
-	splitEdge = list(chunks(Edges_raw,6))
-	print(len(splitEdge))
-	grouplist= grouping(vert, splitEdge)
-	list1 = (pool.starmap(processPart, grouplist))
-	list2=(pool.starmap(compareProccess, zip(list1[0],list1[1],list1[2],list1[3])))
-	list3=pool.map(parentCollect, list2)
-	#print(list2)
-	list4=[]
-	while (list3!=list4):
-		list3=pool.map(parentCollect, list2)
-		a1=(list2, Edges_raw[:3])
-		a2=(list2, Edges_raw[3:])
-		list1 = (pool.starmap(processPart, [a1,a2]))
-		list2=(pool.starmap(compareProccess, zip(list1[0],list1[1])))
-		list4=pool.map(parentCollect, list2)
-	print(list3)	
-	print(list2)
-	pool.close()
+ pool = multiprocessing.Pool(processes=6)
+    Vertex_raw = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+    Edges_raw = [
+        [18, 16],
+        [13, 16],
+        [17, 5],
+        [6, 13],
+        [11, 10],
+        [4, 6],
+        [9, 10],
+        [0, 6],
+        [7, 12],
+        [13, 11],
+        [7, 10],
+        [3, 11],
+        [14, 0],
+        [13, 7],
+        [15, 1],
+        [6, 9],
+        [0, 18],
+        [3, 2],
+        [15, 11],
+        [3, 2],
+    ]
+    manager = multiprocessing.Manager()
+    Vertex_processed = pool.map(parInit, Vertex_raw)
+    splitEdges = list(chunks(Edges_raw, 6))
+    grouplist = grouping(Vertex_processed, splitEdges)
+    list1 = pool.starmap(processPart, grouplist)
+    list2 = manager.list()
+    list2 = pool.starmap(compareProccess, zipper(list1))
+    list3 = pool.map(parentCollect, list2)
+    list4 = []
+    while list3 != list4:
+        list3 = pool.map(parentCollect, list2)
+        grouplist = grouping(list2, splitEdges)
+        list1 = pool.starmap(processPart, grouplist)
+        #list2 = pool.starmap(compareProccess, zipper(list1))
+        list4 = pool.map(parentCollect, list2)
+    print(list4)
+    print(list2)
+    pool.close()
 """
